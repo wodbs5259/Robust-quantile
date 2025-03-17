@@ -1,7 +1,5 @@
 
 source("function.R")
-library(Mqrcm)
-
 
 # When simulation is 0, parameter grid is eliminated error rate object.
 
@@ -34,14 +32,10 @@ for(k in 1:nrow(param.grid)){
     
     Quantile <- as.numeric( quantile(data, probs = tau) )
     
-    M.Q.check <- iMqr(data ~ 1, formula.p = ~ I(qnorm(p))) # Complete
-    M.Q.check.tmp <- summary(M.Q.check, p = c(tau))
-    M.Q <- M.Q.check.tmp[[1]]$coef[1]
-    
-    write(c(i, true.quantile, Quantile, M.Q, S.Q.MADN),
+    write(c(i, true.quantile, Quantile, S.Q.MADN),
           file = paste0("../result/est/Simul0/",
                         "Simul0", "_n_", params[, "n"], "_tau_", params[, "tau"], ".txt"),
-          ncolumns = length(c(i, true.quantile, Quantile, M.Q, S.Q.MADN)), append = T)
+          ncolumns = length(c(i, true.quantile, Quantile, S.Q.MADN)), append = T)
     
   }
   
@@ -108,15 +102,11 @@ for(k in 1:nrow(param.grid)){
     
     Quantile <- as.numeric( quantile(data, probs = tau) )
     
-    M.Q.check <- iMqr(data ~ 1, formula.p = ~ I(qnorm(p))) # ~ I(p) is the same result.
-    M.Q.check.tmp <- summary(M.Q.check, p = c(tau))
-    M.Q <- M.Q.check.tmp[[1]]$coef[1]
-    
-    write(c(i, true.quantile, Quantile, M.Q, S.Q.MADN),
+    write(c(i, true.quantile, Quantile, S.Q.MADN),
           file = paste0("../result/est/", "Simul", params[, "simul"], "/",
                         "Simul", params[, "simul"], "_n_", params[, "n"], 
                         "_error.rate_", params[, "error.rate"], "_tau_", params[, "tau"], ".txt"),
-          ncolumns = length(c(i, true.quantile, Quantile, M.Q, S.Q.MADN)), append = T)
+          ncolumns = length(c(i, true.quantile, Quantile, S.Q.MADN)), append = T)
     
   }
   
