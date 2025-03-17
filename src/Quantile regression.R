@@ -1,4 +1,4 @@
-source("99_function.R")
+source("function.R")
 library(Mqrcm)
 
 simulation.data.make <- function(n = 100, p = 1, error.rate = 0.1, simul = 1) {
@@ -96,17 +96,11 @@ for(k in 1:nrow(param.grid)){
     Quantile <- coef(rq(data[,ncol(data)] ~ as.matrix(data[,-ncol(data)]), tau = tau))
     # names(Quantile) <- paste0("Quantile.beta", 0:params[, "p"])
     
-    # M-Quantile
-    M.Q.check <- iMqr(data[,ncol(data)] ~ as.matrix(data[,-ncol(data)]), formula.p = ~ p) # ~ I(p) is the same result.
-    M.Q.check.tmp <- summary(M.Q.check, p = c(tau))
-    M.Q <- M.Q.check.tmp[[1]]$coef[,1]
-    # names(M.Q) <- paste0("M.Q.beta", 0:params[, "p"])
-    
-    write(c(i, true.quantile, Quantile, M.Q, S.Q.MADN),
+    write(c(i, true.quantile, Quantile, S.Q.MADN),
           file = paste0("../result/reg/", "Simul", params[, "simul"], "/",
                         "Simul", params[, "simul"], "_n_", params[, "n"], "_p_", params[, "p"], 
                         "_error.rate_", params[, "error.rate"], "_tau_", params[, "tau"], ".txt"),
-          ncolumns = length(c(i, true.quantile, Quantile, M.Q, S.Q.MADN)), append = T)
+          ncolumns = length(c(i, true.quantile, Quantile, S.Q.MADN)), append = T)
     
   }
   
