@@ -180,65 +180,9 @@ fit.rob.lin <- function (x, y, tau = 0.5, w.grid = NULL, sig_type = "MADN", a1 =
   
 }
 
-## Skipped quantile spline regression
-
-fit.rob.spline <- function (x, y, tau = 0.5, w.grid = NULL, sig_type = "MADN", a1 = 2.66, a2 = -2.66, df = NULL, prt = FALSE) {
-  
-  if (is.null(w.grid)) w.grid <- 2^(-4:10)
-  
-  if (is.null(df)){
-    b <- smooth.spline(x = x, y = y)
-  } else {
-    b <- smooth.spline(x = x, y = y, df = df)
-  }
-  
-  resid <- y - predict(b, x)$y
-  
-  sig <- ifelse(sig_type == "MADN", median(abs(resid))/0.675, median(abs(resid)))
-  
-  z <- drop(resid/sig)
-  
-  obj <- sum(rho_a(z, a1 = a1, a2 = a2, tau = tau))
-  
-  iter <- 1
-  
-  repeat {
-    
-    if (prt == TRUE) cat(iter, ",", b, ",", obj, "\n")
-    
-    r.mat <- z - sapply(w.grid, FUN = function(w) psi_a(z, a1 = a1, a2 = a2, tau = tau)/w)
-    
-    if (is.null(df)){
-      b.mat <- apply(r.mat, 2, FUN = function (r) smooth.spline(x = x, y = y - r * sig))
-    } else {
-      b.mat <- apply(r.mat, 2, FUN = function (r) smooth.spline(x = x, y = y - r * sig, df = df))
-    }
-    
-    resid.mat <- sapply(b.mat, FUN = function (b) y - predict(b, x)$y)
-    
-    z.mat <- resid.mat / sig
-    
-    obj.vec <- apply(z.mat, 2, FUN = function (z) sum(rho_a(z, a1 = a1, a2 = a2, tau = tau)))
-    
-    idx.w <- which.min(obj.vec)
-    
-    b_new <- b.mat[[idx.w]]
-    
-    obj_new <- obj.vec[idx.w]
-    
-    if (abs(obj-obj_new) < 1e-4 || iter == 200) break
-    
-    b <- b_new; obj <- obj_new; z <- z.mat[,idx.w]; iter <- iter + 1
-    
-  }
-  
-  return(list(b = b, iter = iter))
-  
-}
-
 ## Skipped quantile spline regression (Using ns() function)
 
-fit.rob.spline2 <- function (x, y, tau = 0.5, w.grid = NULL, sig_type = "MADN", a1 = 2.66, a2 = -2.66, df = NULL, prt = FALSE) {
+fit.rob.spline <- function (x, y, tau = 0.5, w.grid = NULL, sig_type = "MADN", a1 = 2.66, a2 = -2.66, df = NULL, prt = FALSE) {
   
   if (is.null(w.grid)) w.grid <- 2^(-4:10)
   
@@ -296,7 +240,7 @@ fit.rob <- function(data, tau = 0.5, center = NULL, df = NULL, sig_type = "MADN"
   a1 <- clipping_point$a1
   a2 <- clipping_point$a2
   
-  # Type = "Estimation" / "linear" / "spline" / "spline.ns"
+  # Type = "Estimation" / "linear" / "spline"
   # If Type = "EStimation" is true, data is a vector.
   # If Type = "linear" or "spline" is true, data is data.frame or matrix.
   # And the target variable must be placed in the last column of the data.
@@ -309,15 +253,10 @@ fit.rob <- function(data, tau = 0.5, center = NULL, df = NULL, sig_type = "MADN"
     res <- fit.rob.lin(x = data[,-ncol(data)], y = data[,ncol(data)],
                        a1 = a1, a2 = a2, tau = tau, sig_type = sig_type)
     
-  } else if(Type == "spline") {
+  } else {
     
     res <- fit.rob.spline(x = data[,-ncol(data)], y = data[,ncol(data)],
                           a1 = a1, a2 = a2, tau = tau, df = df, sig_type = sig_type)
-    
-  } else {
-    
-    res <- fit.rob.spline2(x = data[,-ncol(data)], y = data[,ncol(data)],
-                           a1 = a1, a2 = a2, tau = tau, df = df, sig_type = sig_type)
     
   }
   
