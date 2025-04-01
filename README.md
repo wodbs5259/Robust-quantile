@@ -1,5 +1,7 @@
 # Skipped-Quantile
 
+This repository contains codes necessary to replicate **Joo and Lee**: "Accurate quantile estimation via clipped check loss minimization". The `fit.rob` function in the `code` folder
+
 1. Thesis title
    - Accurate quantile estimation via clipped check loss minimization
   
