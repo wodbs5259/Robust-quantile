@@ -26,7 +26,7 @@ This repository contains codes necessary to replicate **Joo and Lee**: "Accurate
 | Data File                   | Detail                                                                 |
 |-----------------------------|------------------------------------------------------------------------|
 | clipped_point.R             | R code for selecting clipping points (`c1`, `c2`) based on α, controlling the influence of outliers in quantile estimation.<br>Note: `c1`, `c2` in the paper correspond to `a1`, `a2` in the code implementation. |
-| function.R                  | Combined R script integrating `clipped_point.R`, `rho_psi.R`, and `clipped_quantile_function.R` into a single workflow. |
+| function.R                  | Combined R script integrating `clipped_point.R`, `rho_psi.R`, and `robust_quantile_function.R` into a single workflow. |
 | rho_psi.R                   | R script containing the rho and psi functions for the clipped check loss. |
 | robust_quantile_function.R  | R script implementing both estimation and regression functions based on the clipped check loss. |
 
