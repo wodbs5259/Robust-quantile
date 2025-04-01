@@ -8,7 +8,7 @@ This repository contains codes necessary to replicate **Joo and Lee**: "Accurate
 | Folder   | Detail                                                                 |
 |----------|------------------------------------------------------------------------|
 | analysis | R scripts for real data analysis                                       |
-| code     | R scripts for the proposed approach / `function.R` integrates three modules |
+| code     | R scripts for the proposed approach / `function.R` integrates three codes |
 | data     | Data used for real-data analysis                                       |
 | sim      | R scripts for simulation studies                                       |
 
@@ -23,7 +23,10 @@ This repository contains codes necessary to replicate **Joo and Lee**: "Accurate
 
 ### code
 
-| Data File     | Detail                                                                 |
-|---------------|------------------------------------------------------------------------|
-| clipping_point.R  | R code for selecting clipping points (`c1`, `c2`) based on α, controlling the influence of outliers in quantile estimation.<br>Note: `c1`, `c2` in the paper correspond to `a1`, `a2` in the code implementation. |
-| Spline.R      | Quantile regression with spline using the `balloon` dataset            |
+| Data File                   | Detail                                                                 |
+|-----------------------------|------------------------------------------------------------------------|
+| clipping_point.R            | R code for selecting clipping points (`c1`, `c2`) based on α, controlling the influence of outliers in quantile estimation.<br>Note: `c1`, `c2` in the paper correspond to `a1`, `a2` in the code implementation. |
+| function.R                  | Combined R script integrating `clipping_point.R`, `rho_psi.R`, and `skipped_quantile_function.R` into a single workflow. |
+| rho_psi.R                   | R script containing the rho and psi functions for the skipped check loss. |
+| skipped_quantile_function.R | R script implementing both estimation and regression functions based on the skipped check loss. |
+
