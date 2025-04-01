@@ -1,4 +1,5 @@
 ## Clipping point(Skipped point)
+# a1 and a2 correspond to clipping points c1 and c2 in Proposition 1 of the paper.
 
 # asymptotic sample quantile variance
 quantile.var.func <- function(tau = 0.1) {
