@@ -2,6 +2,15 @@
 
 This repository contains codes necessary to replicate **Joo and Lee**: "Accurate quantile estimation via clipped check loss minimization". The `fit.rob` function in the `code` folder is designed for estimation and regression based on the skipped check loss. For estimation, the function requires input in the form of a numeric vector. For regression or spline applications, the input must be provided as a data frame or a matrix, where the target variable is assumed to be located in the last column of the data. The key purpose of this function is to enhance robustness by selectively trimming the data based on a specified efficiency level. By default, the efficiency is set to 0.95, but this can be adjusted within the function as needed to suit specific analysis goals.
 
+## Folder structure
+
+| Folder   | Detail                                                                 |
+|----------|------------------------------------------------------------------------|
+| analysis | R scripts for real data analysis                                       |
+| code     | R scripts for the proposed approach / `function.R` integrates three key components |
+| data     | Data used for real-data analysis                                       |
+| sim      | R scripts for simulation studies                                       |
+
 1. Thesis title
    - Accurate quantile estimation via clipped check loss minimization
   
