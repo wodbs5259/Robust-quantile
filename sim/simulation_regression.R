@@ -14,7 +14,7 @@ simulation.data.make <- function(n = 100, p = 1, error.rate = 0.1, simul = 1) {
       
     } else {
       
-      beta <- c(0, 1, -1, 0, 0, 0)
+      beta <- c(0, 2, 1, 0, -1, -2)
       
       x <- matrix(runif(n * p, -5, 5), nc = p)
       fx <- beta[1] + drop(x %*% beta[-1])
@@ -35,7 +35,7 @@ simulation.data.make <- function(n = 100, p = 1, error.rate = 0.1, simul = 1) {
       
     } else {
       
-      beta <- c(0, 1, -1, 0, 0, 0)
+      beta <- c(0, 2, 1, 0, -1, -2)
       
       x <- matrix(runif(n * p, -5, 5), nc = p)
       fx <- beta[1] + drop(x %*% beta[-1])
