@@ -1,4 +1,4 @@
-source("../code/function.R")
+source("function.R")
 
 library(tidyverse)
 library(splines)
