@@ -32,15 +32,13 @@ for(i in 1:length(tau.tmp)){
   
   tau <- tau.tmp[i]
   
-  
+  # robust quantile
   S.Q.MADN <- fit.rob(data = dat, tau = tau, eff = 0.95, sig_type = "MADN", Type = "linear")
   
-  
+  # standard quantile
   Quantile <- coef(rq(foodexp ~ income, tau = tau, data = dat))
   
-  
   res[[i]] <- rbind("Quantile" = Quantile, "S.Q" = S.Q.MADN$b)
-  
 }
 
 ## result
