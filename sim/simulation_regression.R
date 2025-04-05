@@ -53,10 +53,10 @@ simulation.data.make <- function(n = 100, p = 1, error.rate = 0.1, simul = 1) {
 
 
 n.tmp <- c(100, 200, 400)
-error.rate.tmp <- c(0.05, 0.1, 0.15, 0.2)
+error.rate.tmp <- c(0.05, 0.1)
 simul.tmp <- c(1, 2)
 p.tmp <- c(1, 5)
-tau.tmp <- c(0.95, 0.9, 0.75, 0.5, 0.25, 0.1, 0.05)
+tau.tmp <- c(0.1, 0.25, 0.5, 0.75, 0.9)
 
 param.grid <- expand.grid(n = n.tmp, error.rate = error.rate.tmp, simul = simul.tmp, p = p.tmp, tau = tau.tmp)
 
@@ -78,13 +78,13 @@ for(k in 1:nrow(param.grid)){
     data <- tmp$data
     beta <- tmp$beta
     
-    # S-Quantile
+    # robust quantile
     S.Q.MADN <- fit.rob(data = data, tau = tau, eff = 0.95, sig_type = "MADN", Type = "linear")$b
     
-    # true quantile regression
+    # true quantile
     true.quantile <- c(beta[1] + qnorm(tau), beta[-1])
     
-    # quantile regression
+    # standard quantile
     Quantile <- coef(rq(data[,ncol(data)] ~ as.matrix(data[,-ncol(data)]), tau = tau))
     
     write(c(i, true.quantile, Quantile, S.Q.MADN),
