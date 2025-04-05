@@ -45,10 +45,3 @@ This repository contains codes necessary to replicate **Joo and Lee**: "Robust q
 |-------------------------|-----------------------------------------------------------------------|
 | simulation_estimation.R | R script for running simulation studies for estimation.               |
 | simulation_regression.R | R script for running simulation studies for regression.               |
-
-
-### Report errors
-
-
-### References
-
