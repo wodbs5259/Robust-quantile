@@ -35,7 +35,7 @@ This repository contains codes necessary to replicate **Joo and Lee**: "Robust q
 
 | Data File                   | Detail                                                                 |
 |-----------------------------|------------------------------------------------------------------------|
-| balloon.txt            | The data consist of 4984 observations taken from a balloon about 30 kilometres above the surface of the earth. The outliers are caused by the fact that the balloon slowly rotates, causing the ropes from which the measuring instrument is suspended to cut off the direct radiation from the sun.<br>`Davies, L., Kovac, A., Kovac, M. A., Davies, P. L., Kovac, A., & Local Extremes, R. Package **ftnonpar**`. |
+| balloon.txt            | The data consist of 4984 observations taken from a balloon about 30 kilometres above the surface of the earth. The outliers are caused by the fact that the balloon slowly rotates, causing the ropes from which the measuring instrument is suspended to cut off the direct radiation from the sun.<br>`Davies, L., Kovac, A., Kovac, M. A., Davies, P. L., Kovac, A., & Local Extremes, R. Package `**`ftnonpar`**. |
 | engel.csv                  | Engel food expenditure data used in Koenker and Bassett(1982). This is a regression data set consisting of 235 observations on income and expenditure on food for Belgian working class households.<br>Koenker, R., Portnoy, S., Ng, P. T., Zeileis, A., Grosjean, P., & Ripley, B. D. (2018). Package `quantreg`. |
 
 
