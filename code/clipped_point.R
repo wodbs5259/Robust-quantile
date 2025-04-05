@@ -1,5 +1,3 @@
-## Clipped point
-
 # Variance of the estimated quantile value (τ-th quantile) without truncating
 quantile.var.func <- function(tau = 0.1) {
   tau * (1 - tau) / dnorm( qnorm(tau) )^2
