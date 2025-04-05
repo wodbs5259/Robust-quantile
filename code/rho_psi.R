@@ -1,3 +1,4 @@
+# clipped check loss function
 rho_a <- function(u, a1 = 2.68, a2 = -2.68, tau = 0.5){
   ifelse(u <= a2, -(1 - tau) * a2, 
          ifelse(a2 < u & u <= 0, -(1 - tau) * u, 
@@ -6,6 +7,7 @@ rho_a <- function(u, a1 = 2.68, a2 = -2.68, tau = 0.5){
   )
 }
 
+# subgradient of the clipped check loss function
 psi_a <- function(u, a1 = 2.68, a2 = -2.68, tau = 0.5){
   ifelse(a2 < u & u <= 0, -(1 - tau), 
          ifelse(0 < u & u <= a1, tau, 0)
