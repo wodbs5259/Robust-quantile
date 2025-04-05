@@ -3,16 +3,19 @@ require(quantreg)
 
 ## Clipped point
 
+# Variance of the estimated quantile value (τ-th quantile) without truncating
 quantile.var.func <- function(tau = 0.1) {
   tau * (1 - tau) / dnorm( qnorm(tau) )^2
 }
 
+# Variance of the estimated quantile value (τ-th quantile) with truncating
 quantile.nu.a1.a2.func <- function(tau, a1, a2) {
   tmp1 <- (1 - tau)^2 * ( tau - pnorm( qnorm(tau) + a2 ) ) + tau^2 * ( pnorm( qnorm(tau) + a1 ) - tau )
   tmp2 <- ( (1 - tau) * dnorm( qnorm(tau) + a2 ) +  tau * dnorm( qnorm(tau) + a1 ) - dnorm( qnorm(tau) ) )^2
   tmp1/tmp2
 }
 
+# Calculating alpha using efficiency based on the variance of the estimated τ-th quantile with and without truncation
 clipped_point <- function(tau, efficiency){
   
   require(tidyverse)
@@ -65,8 +68,9 @@ clipped_point <- function(tau, efficiency){
 # epsilon = 0.001 / a1 = 1.81 / a2 = -3.65
 
 
-##rho and psi function
+## rho and psi function
 
+# clipped check loss function
 rho_a <- function(u, a1 = 2.68, a2 = -2.68, tau = 0.5){
   ifelse(u <= a2, -(1 - tau) * a2, 
          ifelse(a2 < u & u <= 0, -(1 - tau) * u, 
@@ -75,6 +79,7 @@ rho_a <- function(u, a1 = 2.68, a2 = -2.68, tau = 0.5){
   )
 }
 
+# subgradient of the clipped check loss function
 psi_a <- function(u, a1 = 2.68, a2 = -2.68, tau = 0.5){
   ifelse(a2 < u & u <= 0, -(1 - tau), 
          ifelse(0 < u & u <= a1, tau, 0)
@@ -96,17 +101,20 @@ psi_a <- function(u, a1 = 2.68, a2 = -2.68, tau = 0.5){
 ## robust quantile function
 
 # robust quantile estimation
-
 fit.rob.qt <- function (x, tau = 0.5, w.grid = NULL, sig_type = "MADN", a1 = 2.66, a2 = -2.66, center = NULL, prt = FALSE) {
   
   require(robustbase)
-  
+
+  # setting w values for grid search when w.grid is NULL
   if (is.null(w.grid)) w.grid <- 2^(-4:10)
-  
+
+  # setting initial values for robust quantile estimation
   m <- ifelse(is.null(center), median(x), center)
-  
+
+  # setting variance values for robust quantile estimation
   sig <- ifelse(sig_type == "MADN", mad(x, center = median(x)), mad(x, center = median(x), constant = 1))
-  
+
+  # beginning the MM algorithm process
   z <- (x - m)/sig
   
   obj <- sum(rho_a(z, a1 = a1, a2 = a2, tau = tau))
@@ -130,7 +138,7 @@ fit.rob.qt <- function (x, tau = 0.5, w.grid = NULL, sig_type = "MADN", a1 = 2.6
     idx.w <- which.min(obj.new)
     
     m.new <- t.mean.new[idx.w]
-    
+
     if (abs(obj - obj.new[idx.w])/obj < 1e-8 || iter == 1000) break
     
     m <- m.new; obj <- obj.new[idx.w]; z <- z.new[,idx.w]; iter <- iter + 1
@@ -140,20 +148,26 @@ fit.rob.qt <- function (x, tau = 0.5, w.grid = NULL, sig_type = "MADN", a1 = 2.6
   
 }
 
-# robust quantile regression
 
+# robust quantile regression
 fit.rob.lin <- function (x, y, tau = 0.5, w.grid = NULL, sig_type = "MADN", a1 = 2.66, a2 = -2.66, prt = FALSE) {
-  
+
+  # setting w values for grid search when w.grid is NULL
   if (is.null(w.grid)) w.grid <- 2^(-4:10)
-  
+
+  # converting data to a matrix
   if (is.matrix(x) == F) x <- as.matrix(x)
-  
+
+  # setting initial values for robust quantile regression
   b <- coef(rq(y ~ x, tau = 0.5))
-  
+
+  # calculate residual
   resid <- y - drop(b[1] + x %*% b[-1]) 
-  
+
+  # setting variance values for robust quantile regression
   sig <- ifelse(sig_type == "MADN", median(abs(resid))/0.675, median(abs(resid)))
-  
+
+  # beginning the MM algorithm process
   z <- resid/sig
   
   obj <- sum(rho_a(z, a1 = a1, a2 = a2, tau = tau))
@@ -190,19 +204,26 @@ fit.rob.lin <- function (x, y, tau = 0.5, w.grid = NULL, sig_type = "MADN", a1 =
   
 }
 
-# robust quantile spline regression (Using ns() function)
 
+# robust quantile spline regression (Using ns() function)
 fit.rob.spline <- function (x, y, tau = 0.5, w.grid = NULL, sig_type = "MADN", a1 = 2.66, a2 = -2.66, df = NULL, prt = FALSE) {
-  
+
+  # setting w values for grid search when w.grid is NULL
   if (is.null(w.grid)) w.grid <- 2^(-4:10)
-  
+
+  # setting degree of freedom when df is NULL
   if (is.null(df)) df <- smooth.spline(x = x, y = y)$df
-  
+
+  # setting initial values for robust quantile spline regression
   b <- coef(rq(y ~ ns(x, df = df), tau = 0.5))
+  
+  # calculate residual
   resid <- y - (b[1] + b[-1] %*% t(ns(x, df = df)))
-  
+
+  # setting variance values for robust quantile spline regression
   sig <- ifelse(sig_type == "MADN", median(abs(resid))/0.675, median(abs(resid)))
-  
+
+  # beginning the MM algorithm process
   z <- drop(resid/sig)
   
   obj <- sum(rho_a(z, a1 = a1, a2 = a2, tau = tau))
@@ -239,6 +260,7 @@ fit.rob.spline <- function (x, y, tau = 0.5, w.grid = NULL, sig_type = "MADN", a
   
 }
 
+                     
 # integration
 fit.rob <- function(data, tau = 0.5, center = NULL, df = NULL, eff = 0.95, sig_type = "MADN", Type = "Estimation"){
   
