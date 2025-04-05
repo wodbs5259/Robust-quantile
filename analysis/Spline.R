@@ -22,14 +22,14 @@ for(i in 1:length(tau.tmp)){
   tau <- tau.tmp[i]
   
   
-  # B-spline 변환된 독립 변수
+  # independent variables transformed using B-splines
   b_spline <- ns(seq_along(balloon), df = check$df)
   
-  
+  # robust quantie
   S.Q.MADN <- fit.rob(data = dat, tau = tau, eff = 0.95, sig_type = "MADN", Type = "spline", df = check$df)
   S.Q.MADN.y.pred <- drop(S.Q.MADN$b[1] + S.Q.MADN$b[-1] %*% t(b_spline))
   
-  
+  # standard quantile
   Quantile <- coef(rq(y ~ ns(x, df = check$df), tau = tau, data = dat))
   Quantile.y.pred <- drop(Quantile[1] + Quantile[-1] %*% t(b_spline))
   
