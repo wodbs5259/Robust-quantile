@@ -4,7 +4,7 @@ source("function.R")
 # When simulation is 0, parameter grid is eliminated error rate object.
 
 n.tmp <- c(100, 200, 400)
-tau.tmp <- c(0.95, 0.9, 0.75, 0.5, 0.25, 0.1, 0.05)
+tau.tmp <- c(0.1, 0.25, 0.5, 0.75, 0.9)
 param.grid <- expand.grid(n = n.tmp, tau = tau.tmp)
 
 for(k in 1:nrow(param.grid)){
@@ -20,11 +20,13 @@ for(k in 1:nrow(param.grid)){
     
     data <- rnorm(n = params[, "n"], m = 0, sd = 1)
     
-    # S-Quantile
+    # robust quantile
     S.Q.MADN <- fit.rob(data = data, tau = tau, eff = 0.95, sig_type = "MADN", Type = "Estimation", center = median(data))$m
-    
+
+    # true quantile
     true.quantile <- as.numeric( qnorm(p = tau, m = 0, s = 1) )
-    
+
+    # standard quantile
     Quantile <- as.numeric( quantile(data, probs = tau) )
     
     write(c(i, true.quantile, Quantile, S.Q.MADN),
@@ -61,9 +63,9 @@ simulation.data.make <- function(n = 100, error.rate = 0.1, simul = 1) {
 }
 
 n.tmp <- c(100, 200, 400)
-error.rate.tmp <- c(0.05, 0.1, 0.15, 0.2)
+error.rate.tmp <- c(0.05, 0.1)
 simul.tmp <- c(1, 2)
-tau.tmp <- c(0.95, 0.9, 0.75, 0.5, 0.25, 0.1, 0.05)
+tau.tmp <- c(0.1, 0.25, 0.5, 0.75, 0.9)
 
 param.grid <- expand.grid(n = n.tmp, error.rate = error.rate.tmp, simul = simul.tmp, tau = tau.tmp)
 
@@ -85,11 +87,13 @@ for(k in 1:nrow(param.grid)){
     real.data <- tmp$real.data
     data <- tmp$data
     
-    # S-Quantile
+    # robust quantile
     S.Q.MADN <- fit.rob(data = data, tau = tau, eff = 0.95, sig_type = "MADN", Type = "Estimation", center = median(data))$m
-    
+
+    # true quantile
     true.quantile <- as.numeric( qnorm(p = tau, m = 0, s = 1) )
-    
+
+    # standard quantile
     Quantile <- as.numeric( quantile(data, probs = tau) )
     
     write(c(i, true.quantile, Quantile, S.Q.MADN),
