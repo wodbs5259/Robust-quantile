@@ -1,15 +1,18 @@
 ## Clipped point
 
+# Variance of the estimated quantile value (τ-th quantile) without truncating
 quantile.var.func <- function(tau = 0.1) {
   tau * (1 - tau) / dnorm( qnorm(tau) )^2
 }
 
+# Variance of the estimated quantile value (τ-th quantile) with truncating
 quantile.nu.a1.a2.func <- function(tau, a1, a2) {
   tmp1 <- (1 - tau)^2 * ( tau - pnorm( qnorm(tau) + a2 ) ) + tau^2 * ( pnorm( qnorm(tau) + a1 ) - tau )
   tmp2 <- ( (1 - tau) * dnorm( qnorm(tau) + a2 ) +  tau * dnorm( qnorm(tau) + a1 ) - dnorm( qnorm(tau) ) )^2
   tmp1/tmp2
 }
 
+# Calculating alpha using efficiency based on the variance of the estimated τ-th quantile with and without truncation
 clipped_point <- function(tau, efficiency){
   
   require(tidyverse)
