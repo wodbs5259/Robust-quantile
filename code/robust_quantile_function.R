@@ -1,15 +1,18 @@
-## robust quantile estimation
-
+# robust quantile estimation
 fit.rob.qt <- function (x, tau = 0.5, w.grid = NULL, sig_type = "MADN", a1 = 2.66, a2 = -2.66, center = NULL, prt = FALSE) {
   
   require(robustbase)
   
+  # setting w values for grid search when w.grid is NULL
   if (is.null(w.grid)) w.grid <- 2^(-4:10)
   
+  # setting initial values for robust quantile estimation
   m <- ifelse(is.null(center), median(x), center)
   
+  # setting variance values for robust quantile estimation
   sig <- ifelse(sig_type == "MADN", mad(x, center = median(x)), mad(x, center = median(x), constant = 1))
   
+  # beginning the MM algorithm process
   z <- (x - m)/sig
   
   obj <- sum(rho_a(z, a1 = a1, a2 = a2, tau = tau))
@@ -43,20 +46,26 @@ fit.rob.qt <- function (x, tau = 0.5, w.grid = NULL, sig_type = "MADN", a1 = 2.6
   
 }
 
-## robust quantile regression
 
+# robust quantile regression
 fit.rob.lin <- function (x, y, tau = 0.5, w.grid = NULL, sig_type = "MADN", a1 = 2.66, a2 = -2.66, prt = FALSE) {
   
+  # setting w values for grid search when w.grid is NULL
   if (is.null(w.grid)) w.grid <- 2^(-4:10)
   
+  # converting data to a matrix
   if (is.matrix(x) == F) x <- as.matrix(x)
   
+  # setting initial values for robust quantile regression
   b <- coef(rq(y ~ x, tau = 0.5))
   
+  # calculate residual
   resid <- y - drop(b[1] + x %*% b[-1]) 
   
+  # setting variance values for robust quantile regression
   sig <- ifelse(sig_type == "MADN", median(abs(resid))/0.675, median(abs(resid)))
   
+  # beginning the MM algorithm process
   z <- resid/sig
   
   obj <- sum(rho_a(z, a1 = a1, a2 = a2, tau = tau))
@@ -93,19 +102,26 @@ fit.rob.lin <- function (x, y, tau = 0.5, w.grid = NULL, sig_type = "MADN", a1 =
   
 }
 
-## robust quantile spline regression (Using ns() function)
 
+# robust quantile spline regression (Using ns() function)
 fit.rob.spline <- function (x, y, tau = 0.5, w.grid = NULL, sig_type = "MADN", a1 = 2.66, a2 = -2.66, df = NULL, prt = FALSE) {
   
+  # setting w values for grid search when w.grid is NULL
   if (is.null(w.grid)) w.grid <- 2^(-4:10)
   
+  # setting degree of freedom when df is NULL
   if (is.null(df)) df <- smooth.spline(x = x, y = y)$df
   
+  # setting initial values for robust quantile spline regression
   b <- coef(rq(y ~ ns(x, df = df), tau = 0.5))
+  
+  # calculate residual
   resid <- y - (b[1] + b[-1] %*% t(ns(x, df = df)))
   
+  # setting variance values for robust quantile spline regression
   sig <- ifelse(sig_type == "MADN", median(abs(resid))/0.675, median(abs(resid)))
   
+  # beginning the MM algorithm process
   z <- drop(resid/sig)
   
   obj <- sum(rho_a(z, a1 = a1, a2 = a2, tau = tau))
@@ -142,7 +158,8 @@ fit.rob.spline <- function (x, y, tau = 0.5, w.grid = NULL, sig_type = "MADN", a
   
 }
 
-## integration
+
+# integration
 fit.rob <- function(data, tau = 0.5, center = NULL, df = NULL, eff = 0.95, sig_type = "MADN", Type = "Estimation"){
   
   clipped_point <- clipped_point(tau = tau, efficiency = eff)
@@ -172,4 +189,3 @@ fit.rob <- function(data, tau = 0.5, center = NULL, df = NULL, eff = 0.95, sig_t
   
   return(res)
 }
-
