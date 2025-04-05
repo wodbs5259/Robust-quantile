@@ -39,7 +39,7 @@ This repository contains codes necessary to replicate **Joo and Lee**: "Robust q
 | engel.csv                  | Engel food expenditure data used in Koenker and Bassett(1982). This is a regression data set consisting of 235 observations on income and expenditure on food for Belgian working class households.<br>`Koenker, R., Portnoy, S., Ng, P. T., Zeileis, A., Grosjean, P., & Ripley, B. D. (2018). Package quantreg`. |
 
 
-### code
+### sim
 
 | Data File               | Detail                                                                |
 |-------------------------|-----------------------------------------------------------------------|
