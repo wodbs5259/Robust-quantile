@@ -21,7 +21,6 @@ for(i in 1:length(tau.tmp)){
   
   tau <- tau.tmp[i]
   
-  
   # independent variables transformed using B-splines
   b_spline <- ns(seq_along(balloon), df = check$df)
   
@@ -32,7 +31,6 @@ for(i in 1:length(tau.tmp)){
   # standard quantile
   Quantile <- coef(rq(y ~ ns(x, df = check$df), tau = tau, data = dat))
   Quantile.y.pred <- drop(Quantile[1] + Quantile[-1] %*% t(b_spline))
-  
   
   res[[i]] <- data.frame(Q = Quantile.y.pred, S.Q = S.Q.MADN.y.pred)
 }
