@@ -82,3 +82,38 @@ for(i in 1:length(tau.tmp)){
 # 
 # 
 # p12 <- gridExtra::grid.arrange(p1, p2, ncol = 2)
+
+## Residual plot and qqplot
+# lad.fit <- rq(foodexp ~ income, tau = 0.5, data = engel)
+# 
+# lad.fit$residuals
+# lad.fit$fitted.values
+# 
+# p3 <- ggplot(data.frame(pred = lad.fit$x[,2], resid = lad.fit$residuals)) +
+#   geom_point(aes(x = pred, y = resid), size = 0.5) +
+#   geom_hline(yintercept = 0, lwd = 0.5) +
+#   labs(x = "Income", y = "Residuals", title = "Residual plot") + # lower?
+#   ylim(c(-0.25, 0.25)) +
+#   theme_bw() +
+#   theme(plot.title = element_text(size = 10, hjust = 0.5, face='bold'),
+#         axis.text.x = element_text(size = 6, face='bold'),
+#         axis.text.y = element_text(size = 6, hjust=1, face='bold'),
+#         axis.title.x = element_text(size = 8, face='bold'),
+#         axis.title.y = element_text(size = 8, face='bold'),
+#         panel.grid = element_blank(),
+#         plot.margin = margin(t = 5, r = 15, b = 5, l = 5))
+# 
+# p4 <- ggplot(data.frame(resid = lad.fit$residuals), aes(sample = resid)) +
+#   stat_qq(size = 0.5) +  
+#   stat_qq_line(color = "black") + 
+#   labs(x = "Theoretical Quantiles", y = "Sample Quantiles", title = "QQ plot") +
+#   theme_bw() +
+#   theme(plot.title = element_text(size = 10, hjust = 0.5, face='bold'),
+#         axis.text.x = element_text(size = 6, face='bold'),
+#         axis.text.y = element_text(size = 6, hjust=1, face='bold'),
+#         axis.title.x = element_text(size = 8, face='bold'),
+#         axis.title.y = element_text(size = 8, face='bold'),
+#         panel.grid = element_blank(),
+#         plot.margin = margin(t = 5, r = 15, b = 5, l = 5))
+# 
+# p34 <- gridExtra::grid.arrange(p3, p4, ncol = 2)
