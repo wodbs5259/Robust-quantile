@@ -47,7 +47,7 @@ simulation.data.make <- function(n = 100, error.rate = 0.1, simul = 1) {
   if(simul == 1){
     
     real.data <- rnorm(n * (1 - error.rate), mean = 0, sd = 1)
-    contaminate.data <- rnorm(n * error.rate, mean = 5, sd = 0.1)
+    contaminate.data <- rnorm(n * error.rate, mean = 5, sd = 1)
     
   } else {
     
