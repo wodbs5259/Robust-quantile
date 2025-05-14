@@ -1,4 +1,4 @@
-source("function.R")
+source("../code/function.R")
 
 simulation.data.make <- function(n = 100, p = 1, error.rate = 0.1, simul = 1) {
   
