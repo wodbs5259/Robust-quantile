@@ -101,7 +101,7 @@ for(k in 1:nrow(param.grid)){
     if(simul != 3){
       true.quantile <- as.numeric( qnorm(p = tau, m = 0, s = 1) )
     } else {
-      true.quantile <- as.numeric( qt(p = tau, df = 3)/sqrt(3) ) # true.quantile <- as.numeric( qt(p = tau, df = 5)/sqrt(5/3) )
+      true.quantile <- as.numeric( qt(p = tau, df = 3)/sqrt(3) ) # as.numeric( qt(p = tau, df = 5)/sqrt(5/3) )
     }
 
     # standard quantile
