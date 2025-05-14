@@ -105,7 +105,12 @@ for(k in 1:nrow(param.grid)){
     S.Q.MADN <- fit.rob(data = data, tau = tau, eff = 0.95, sig_type = "MADN", Type = "linear")$b
     
     # true quantile
-    true.quantile <- c(beta[1] + qnorm(tau), beta[-1])
+    if (simul != 3){
+      true.quantile <- c(beta[1] + qnorm(tau), beta[-1])
+    } else {
+      true.quantile <- c(beta[1] + qt(tau, df = 3)/sqrt(3), beta[-1]) # c(beta[1] + qt(tau, df = 5)/sqrt(5/3), beta[-1])
+    }
+    
     
     # standard quantile
     Quantile <- coef(rq(data[,ncol(data)] ~ as.matrix(data[,-ncol(data)]), tau = tau))
@@ -122,54 +127,3 @@ for(k in 1:nrow(param.grid)){
       " p :", params[, "p"], " tau :", params[, "tau"], "finish\n\n")
   
 }
-
-# simulation 3
-
-n.tmp <- c(100, 200, 400)
-error.rate.tmp <- c(0.05, 0.1, 0.15, 0.2)
-simul.tmp <- c(3)
-p.tmp <- c(5)
-tau.tmp <- c(0.95, 0.9, 0.75, 0.5, 0.25, 0.1, 0.05)
-
-param.grid <- expand.grid(n = n.tmp, error.rate = error.rate.tmp, simul = simul.tmp, p = p.tmp, tau = tau.tmp)
-
-for(k in 1:nrow(param.grid)){
-  params <- param.grid[k, ]
-  
-  cat("n :", params[, "n"], " error.rate :", params[, "error.rate"], " simul :", params[, "simul"], 
-      " p :", params[, "p"], " tau :", params[, "tau"], "start\n\n")
-  
-  tau <- params[, "tau"]
-  
-  for (i in 1:100) {
-    
-    set.seed(13 * i + 120)
-    
-    tmp <- simulation.data.make(n = params[, "n"], error.rate = params[, "error.rate"], 
-                                simul = params[, "simul"], p = params[, "p"])
-    
-    data <- tmp$data
-    beta <- tmp$beta
-    
-    # S-Quantile
-    S.Q.MADN <- fit.rob(data = data, tau = tau, eff = 0.95, sig_type = "MADN", Type = "linear")$b
-    
-    # true quantile regression
-    true.quantile <- c(beta[1] + qt(tau, df = 3)/sqrt(3), beta[-1]) # c(beta[1] + qt(tau, df = 5)/sqrt(5/3), beta[-1])
-    
-    # quantile regression
-    Quantile <- coef(rq(data[,ncol(data)] ~ as.matrix(data[,-ncol(data)]), tau = tau))
-    
-    write(c(i, true.quantile, Quantile, S.Q.MADN),
-          file = paste0("../result/reg/", "Simul", params[, "simul"], "/",
-                        "Simul", params[, "simul"], "_n_", params[, "n"], "_p_", params[, "p"], 
-                        "_error.rate_", params[, "error.rate"], "_tau_", params[, "tau"], ".txt"),
-          ncolumns = length(c(i, true.quantile, Quantile, S.Q.MADN)), append = T)
-    
-  }
-  
-  cat("n :", params[, "n"], " error.rate :", params[, "error.rate"], " simul :", params[, "simul"], 
-      " p :", params[, "p"], " tau :", params[, "tau"], "finish\n\n")
-  
-}
-
