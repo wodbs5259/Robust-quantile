@@ -1,5 +1,5 @@
 
-source("function.R")
+source("../code/function.R")
 
 # When simulation is 0, parameter grid is eliminated error rate object.
 
