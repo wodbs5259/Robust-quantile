@@ -51,13 +51,8 @@ simulation.data.make <- function(n = 100, error.rate = 0.1, simul = 1) {
     
   } else if(simul == 2) {
     
-    real.data <- rnorm(n * (1 - error.rate), mean = 0, sd = 1)
+    real.data <- rt(n * (1 - error.rate), df = 5)/sqrt(5/3)
     contaminate.data <- rnorm(n * error.rate, mean = 0, sd = 5)
-    
-  } else { 
-  
-    real.data <- rt(n * (1 - error.rate), df = 3)/sqrt(3) # rt(n * (1 - error.rate), df = 5)/sqrt(5/3)
-    contaminate.data <- rnorm(n * error.rate, mean = 5, sd = 1)
     
   }
   
@@ -101,7 +96,7 @@ for(k in 1:nrow(param.grid)){
     if(simul != 3){
       true.quantile <- as.numeric( qnorm(p = tau, m = 0, s = 1) )
     } else {
-      true.quantile <- as.numeric( qt(p = tau, df = 3)/sqrt(3) ) # as.numeric( qt(p = tau, df = 5)/sqrt(5/3) )
+      true.quantile <- as.numeric( qt(p = tau, df = 5)/sqrt(5/3) )
     }
 
     # standard quantile
@@ -119,3 +114,4 @@ for(k in 1:nrow(param.grid)){
       " tau :", params[, "tau"], "finish\n\n")
   
 }
+
