@@ -30,7 +30,7 @@ simulation.data.make <- function(n = 100, p = 1, error.rate = 0.1, simul = 1) {
       
       x <- matrix(runif(n * p, -5, 5), nc = p)
       fx <- beta[1] + drop(x %*% beta[-1])
-      e <- c(rnorm(n * (1 - error.rate), 0, 1), rnorm(n * error.rate, 0, 5))
+      e <- c(rt(n * (1 - error.rate), df = 5)/sqrt(5/3), rnorm(n * error.rate, 0, 5))
       y <- fx + e
       
     } else {
@@ -39,33 +39,12 @@ simulation.data.make <- function(n = 100, p = 1, error.rate = 0.1, simul = 1) {
       
       x <- matrix(runif(n * p, -5, 5), nc = p)
       fx <- beta[1] + drop(x %*% beta[-1])
-      e <- c(rnorm(n * (1 - error.rate), 0, 1), rnorm(n * error.rate, 0, 5))
+      e <- c(rt(n * (1 - error.rate), df = 5)/sqrt(5/3), rnorm(n * error.rate, 0, 5))
       y <- fx + e
       
     }
     
-  } else {
-
-    if(p == 1){
-      beta <- c(0, 1)
-      
-      x <- matrix(runif(n * p, -5, 5), nc = p)
-      fx <- beta[1] + drop(x %*% beta[-1])
-      e <- c(rt(n * (1 - error.rate), df = 3)/sqrt(3), rnorm(n * error.rate, 5, 1)) # c(rt(n * (1 - error.rate), df = 5)/sqrt(5/3), rnorm(n * error.rate, 5, 1))
-      y <- fx + e
-      
-    } else {
-      
-      beta <- c(0, 2, 1, 0, -1, -2)
-      
-      x <- matrix(runif(n * p, -5, 5), nc = p)
-      fx <- beta[1] + drop(x %*% beta[-1])
-      e <- c(rt(n * (1 - error.rate), df = 3)/sqrt(3), rnorm(n * error.rate, 5, 1)) # c(rt(n * (1 - error.rate), df = 5)/sqrt(5/3), rnorm(n * error.rate, 5, 1))
-      y <- fx + e
-      
-    }
-    
-  }
+  } 
     
   data <- data.frame(x = x, y = y)
   
@@ -108,7 +87,7 @@ for(k in 1:nrow(param.grid)){
     if (simul != 3){
       true.quantile <- c(beta[1] + qnorm(tau), beta[-1])
     } else {
-      true.quantile <- c(beta[1] + qt(tau, df = 3)/sqrt(3), beta[-1]) # c(beta[1] + qt(tau, df = 5)/sqrt(5/3), beta[-1])
+      true.quantile <- c(beta[1] + qt(tau, df = 5)/sqrt(5/3), beta[-1])
     }
     
     
@@ -127,3 +106,4 @@ for(k in 1:nrow(param.grid)){
       " p :", params[, "p"], " tau :", params[, "tau"], "finish\n\n")
   
 }
+
