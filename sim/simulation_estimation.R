@@ -93,9 +93,9 @@ for(k in 1:nrow(param.grid)){
     S.Q.MADN <- fit.rob(data = data, tau = tau, eff = 0.95, sig_type = "MADN", Type = "Estimation", center = median(data))$m
 
     # true quantile
-    if(simul != 3){
+    if(simul == 1){
       true.quantile <- as.numeric( qnorm(p = tau, m = 0, s = 1) )
-    } else {
+    } else if(simul == 2) {
       true.quantile <- as.numeric( qt(p = tau, df = 5)/sqrt(5/3) )
     }
 
@@ -114,4 +114,5 @@ for(k in 1:nrow(param.grid)){
       " tau :", params[, "tau"], "finish\n\n")
   
 }
+
 
