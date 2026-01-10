@@ -30,7 +30,7 @@ simulation.data.make <- function(n = 100, p = 1, error.rate = 0.1, simul = 1) {
       
       x <- matrix(runif(n * p, -5, 5), nc = p)
       fx <- beta[1] + drop(x %*% beta[-1])
-      e <- c(rt(n * (1 - error.rate), df = 5)/sqrt(5/3), rnorm(n * error.rate, 0, 5))
+      e <- c(rt(n * (1 - error.rate), df = 5), rnorm(n * error.rate, 0, 5))
       y <- fx + e
       
     } else {
@@ -39,7 +39,7 @@ simulation.data.make <- function(n = 100, p = 1, error.rate = 0.1, simul = 1) {
       
       x <- matrix(runif(n * p, -5, 5), nc = p)
       fx <- beta[1] + drop(x %*% beta[-1])
-      e <- c(rt(n * (1 - error.rate), df = 5)/sqrt(5/3), rnorm(n * error.rate, 0, 5))
+      e <- c(rt(n * (1 - error.rate), df = 5), rnorm(n * error.rate, 0, 5))
       y <- fx + e
       
     }
@@ -81,20 +81,19 @@ for(k in 1:nrow(param.grid)){
     beta <- tmp$beta
     
     # robust quantile
-    S.Q.MADN <- fit.rob(data = data, tau = tau, eff = 0.95, sig_type = "MADN", Type = "linear")$b
+    Robust <- fit.rob(data = data, tau = tau, eff = 0.95, sig_type = "MADN", Type = "linear")$b
     
     # true quantile
     if (simul == 1){
       true.quantile <- c(beta[1] + qnorm(tau), beta[-1])
     } else if(simul == 2) {
-      true.quantile <- c(beta[1] + qt(tau, df = 5)/sqrt(5/3), beta[-1])
+      true.quantile <- c(beta[1] + qt(tau, df = 5), beta[-1])
     }
-    
     
     # standard quantile
     Quantile <- coef(rq(data[,ncol(data)] ~ as.matrix(data[,-ncol(data)]), tau = tau))
     
-    write(c(i, true.quantile, Quantile, S.Q.MADN),
+    write(c(i, true.quantile, Quantile, Robust),
           file = paste0("../result/reg/", "Simul", params[, "simul"], "/",
                         "Simul", params[, "simul"], "_n_", params[, "n"], "_p_", params[, "p"], 
                         "_error.rate_", params[, "error.rate"], "_tau_", params[, "tau"], ".txt"),
@@ -106,5 +105,6 @@ for(k in 1:nrow(param.grid)){
       " p :", params[, "p"], " tau :", params[, "tau"], "finish\n\n")
   
 }
+
 
 
