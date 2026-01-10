@@ -21,7 +21,7 @@ for(k in 1:nrow(param.grid)){
     data <- rnorm(n = params[, "n"], m = 0, sd = 1)
     
     # robust quantile
-    S.Q.MADN <- fit.rob(data = data, tau = tau, eff = 0.95, sig_type = "MADN", Type = "Estimation", center = median(data))$m
+    Robust <- fit.rob(data = data, tau = tau, eff = 0.95, sig_type = "MADN", Type = "Estimation", center = median(data))$m
 
     # true quantile
     true.quantile <- as.numeric( qnorm(p = tau, m = 0, s = 1) )
@@ -29,7 +29,7 @@ for(k in 1:nrow(param.grid)){
     # standard quantile
     Quantile <- as.numeric( quantile(data, probs = tau) )
     
-    write(c(i, true.quantile, Quantile, S.Q.MADN),
+    write(c(i, true.quantile, Quantile, Robust),
           file = paste0("../result/est/Simul0/",
                         "Simul0", "_n_", params[, "n"], "_tau_", params[, "tau"], ".txt"),
           ncolumns = length(c(i, true.quantile, Quantile, S.Q.MADN)), append = T)
@@ -51,7 +51,7 @@ simulation.data.make <- function(n = 100, error.rate = 0.1, simul = 1) {
     
   } else if(simul == 2) {
     
-    real.data <- rt(n * (1 - error.rate), df = 5)/sqrt(5/3)
+    real.data <- rt(n * (1 - error.rate), df = 5)
     contaminate.data <- rnorm(n * error.rate, mean = 0, sd = 5)
     
   }
@@ -90,19 +90,19 @@ for(k in 1:nrow(param.grid)){
     data <- tmp$data
     
     # robust quantile
-    S.Q.MADN <- fit.rob(data = data, tau = tau, eff = 0.95, sig_type = "MADN", Type = "Estimation", center = median(data))$m
+    Robust <- fit.rob(data = data, tau = tau, eff = 0.95, sig_type = "MADN", Type = "Estimation", center = median(data))$m
 
     # true quantile
     if(simul == 1){
       true.quantile <- as.numeric( qnorm(p = tau, m = 0, s = 1) )
     } else if(simul == 2) {
-      true.quantile <- as.numeric( qt(p = tau, df = 5)/sqrt(5/3) )
+      true.quantile <- as.numeric( qt(p = tau, df = 5) )
     }
 
     # standard quantile
     Quantile <- as.numeric( quantile(data, probs = tau) )
     
-    write(c(i, true.quantile, Quantile, S.Q.MADN),
+    write(c(i, true.quantile, Quantile, Robust),
           file = paste0("../result/est/", "Simul", params[, "simul"], "/",
                         "Simul", params[, "simul"], "_n_", params[, "n"], 
                         "_error.rate_", params[, "error.rate"], "_tau_", params[, "tau"], ".txt"),
@@ -114,5 +114,6 @@ for(k in 1:nrow(param.grid)){
       " tau :", params[, "tau"], "finish\n\n")
   
 }
+
 
 
