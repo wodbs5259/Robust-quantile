@@ -97,7 +97,7 @@ for(k in 1:nrow(param.grid)){
           file = paste0("../result/reg/", "Simul", params[, "simul"], "/",
                         "Simul", params[, "simul"], "_n_", params[, "n"], "_p_", params[, "p"], 
                         "_error.rate_", params[, "error.rate"], "_tau_", params[, "tau"], ".txt"),
-          ncolumns = length(c(i, true.quantile, Quantile, S.Q.MADN)), append = T)
+          ncolumns = length(c(i, true.quantile, Quantile, Robust)), append = T)
     
   }
   
@@ -105,6 +105,7 @@ for(k in 1:nrow(param.grid)){
       " p :", params[, "p"], " tau :", params[, "tau"], "finish\n\n")
   
 }
+
 
 
 
