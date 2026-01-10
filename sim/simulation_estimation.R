@@ -32,7 +32,7 @@ for(k in 1:nrow(param.grid)){
     write(c(i, true.quantile, Quantile, Robust),
           file = paste0("../result/est/Simul0/",
                         "Simul0", "_n_", params[, "n"], "_tau_", params[, "tau"], ".txt"),
-          ncolumns = length(c(i, true.quantile, Quantile, S.Q.MADN)), append = T)
+          ncolumns = length(c(i, true.quantile, Quantile, Robust)), append = T)
     
   }
   
@@ -106,7 +106,7 @@ for(k in 1:nrow(param.grid)){
           file = paste0("../result/est/", "Simul", params[, "simul"], "/",
                         "Simul", params[, "simul"], "_n_", params[, "n"], 
                         "_error.rate_", params[, "error.rate"], "_tau_", params[, "tau"], ".txt"),
-          ncolumns = length(c(i, true.quantile, Quantile, S.Q.MADN)), append = T)
+          ncolumns = length(c(i, true.quantile, Quantile, Robust)), append = T)
     
   }
   
@@ -114,6 +114,7 @@ for(k in 1:nrow(param.grid)){
       " tau :", params[, "tau"], "finish\n\n")
   
 }
+
 
 
 
