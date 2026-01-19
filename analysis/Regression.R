@@ -2,6 +2,7 @@ source("function.R")
 
 library(tidyverse)
 
+## Transformed data analysis
 
 data("engel", package = "quantreg")
 
@@ -47,7 +48,7 @@ for(i in 1:length(tau.tmp)){
 # 
 # p1 <- ggplot(dat) + geom_point(data = outlier.dat, aes(x = income, y = foodexp), col = "black", size = 0.5, shape = 19) +
 #   geom_point(data = engel, aes(x = income, y = foodexp), shape = 1, size = 0.5) + # alpha = 0.4
-#   theme_bw() + labs(title = "") + # lower? , x = "Income", y = "Foodexp"
+#   theme_bw() + labs(title = "") + # x = "Income", y = "Foodexp"
 #   geom_abline(slope = res[["0.1"]][1, 2], intercept = res[["0.1"]][1, 1], lwd = 0.2, col = "blue") +
 #   geom_abline(slope = res[["0.25"]][1, 2], intercept = res[["0.25"]][1, 1], lwd = 0.2, col = "blue") +
 #   geom_abline(slope = res[["0.5"]][1, 2], intercept = res[["0.5"]][1, 1], lwd = 0.2, col = "blue") +
@@ -64,7 +65,7 @@ for(i in 1:length(tau.tmp)){
 # 
 # p2 <- ggplot(dat) + geom_point(data = outlier.dat, aes(x = income, y = foodexp), col = "black", size = 0.5, shape = 19) +
 #   geom_point(data = engel, aes(x = income, y = foodexp), shape = 1, size = 0.5) + # alpha = 0.4
-#   theme_bw() + labs(title = "") + # lower? , x = "Income", y = "Foodexp"
+#   theme_bw() + labs(title = "") + # x = "Income", y = "Foodexp"
 #   geom_abline(slope = res[["0.1"]][2, 2], intercept = res[["0.1"]][2, 1], lwd = 0.2, col = "blue") +
 #   geom_abline(slope = res[["0.25"]][2, 2], intercept = res[["0.25"]][2, 1], lwd = 0.2, col = "blue") +
 #   geom_abline(slope = res[["0.5"]][2, 2], intercept = res[["0.5"]][2, 1], lwd = 0.2, col = "blue") +
@@ -115,3 +116,87 @@ for(i in 1:length(tau.tmp)){
 #         plot.margin = margin(t = 5, r = 15, b = 5, l = 5))
 # 
 # p34 <- gridExtra::grid.arrange(p3, p4, ncol = 2)
+
+
+## Untransformed data analysis
+
+data("engel", package = "quantreg")
+
+engel_tf <- log10(engel)
+
+set.seed(200)
+
+eps <- 0.1
+
+outlier.income <- sample(sort(unique(engel_tf$income)), size = ceiling(nrow(engel_tf) * eps / (1 - eps)), replace = F)
+
+outlier.point <- engel_tf %>% filter(income %in% unique(outlier.income)) %>% group_by(income) %>% 
+  summarise(foodexp = mean(foodexp, na.rm = T), .groups = "drop") %>% as.data.frame()
+
+outlier.dat <- left_join(data.frame(income = outlier.income), outlier.point, by = "income")
+
+outlier.dat$foodexp <- outlier.dat$foodexp + 0.5
+
+outlier.dat <- 10^outlier.dat
+
+dat <- rbind(engel, outlier.dat)
+
+
+tau.tmp <- c(0.10, 0.25, 0.50, 0.75, 0.90)
+
+
+res <- list()
+
+for(i in 1:length(tau.tmp)){
+  
+  tau <- tau.tmp[i]
+  
+  # robust quantile
+  S.Q.MADN <- fit.rob(data = dat, tau = tau, eff = 0.95, sig_type = "MADN", Type = "linear")
+  
+  # standard quantile
+  Quantile <- coef(rq(foodexp ~ income, tau = tau, data = dat))
+  
+  res[[i]] <- rbind("Quantile" = Quantile, "S.Q" = S.Q.MADN$b)
+  
+}
+
+## result
+
+# names(res) <- tau.tmp
+# 
+# p5 <- ggplot() + geom_point(data = outlier.dat, aes(x = income, y = foodexp), col = "black", size = 0.5, shape = 19) +
+#   geom_point(data = engel, aes(x = income, y = foodexp), shape = 1, size = 0.5) + # alpha = 0.4
+#   theme_bw() + labs(title = "") + # x = "Income", y = "Foodexp"
+#   geom_abline(slope = res[["0.1"]][1, 2], intercept = res[["0.1"]][1, 1], lwd = 0.2, col = "blue") +
+#   geom_abline(slope = res[["0.25"]][1, 2], intercept = res[["0.25"]][1, 1], lwd = 0.2, col = "blue") +
+#   geom_abline(slope = res[["0.5"]][1, 2], intercept = res[["0.5"]][1, 1], lwd = 0.2, col = "blue") +
+#   geom_abline(slope = res[["0.75"]][1, 2], intercept = res[["0.75"]][1, 1], lwd = 0.2, col = "blue") +
+#   geom_abline(slope = res[["0.9"]][1, 2], intercept = res[["0.9"]][1, 1], lwd = 0.2, col = "blue") +
+#   theme(plot.title = element_text(size = 10, hjust = 0.5, face='bold'),
+#         axis.text.x = element_text(size = 6, face='bold'),
+#         axis.text.y = element_text(size = 6, hjust=1, face='bold'),
+#         axis.title.x = element_text(size = 8, face='bold'),
+#         axis.title.y = element_text(size = 8, face='bold'),
+#         panel.grid = element_blank(),
+#         plot.margin = margin(t = 5, r = 15, b = 5, l = 5))
+# 
+# p6 <- ggplot() + geom_point(data = outlier.dat, aes(x = income, y = foodexp), col = "black", size = 0.5, shape = 19) +
+#   geom_point(data = engel, aes(x = income, y = foodexp), shape = 1, size = 0.5) + # alpha = 0.4
+#   theme_bw() + labs(title = "") + # x = "Income", y = "Foodexp"
+#   geom_abline(slope = res[["0.1"]][2, 2], intercept = res[["0.1"]][2, 1], lwd = 0.2, col = "blue") +
+#   geom_abline(slope = res[["0.25"]][2, 2], intercept = res[["0.25"]][2, 1], lwd = 0.2, col = "blue") +
+#   geom_abline(slope = res[["0.5"]][2, 2], intercept = res[["0.5"]][2, 1], lwd = 0.2, col = "blue") +
+#   geom_abline(slope = res[["0.75"]][2, 2], intercept = res[["0.75"]][2, 1], lwd = 0.2, col = "blue") +
+#   geom_abline(slope = res[["0.9"]][2, 2], intercept = res[["0.9"]][2, 1], lwd = 0.2, col = "blue") +
+#   theme(plot.title = element_text(size = 10, hjust = 0.5, face='bold'),
+#         axis.text.x = element_text(size = 6, face='bold'),
+#         axis.text.y = element_text(size = 6, hjust=1, face='bold'),
+#         axis.title.x = element_text(size = 8, face='bold'),
+#         axis.title.y = element_text(size = 8, face='bold'),
+#         panel.grid = element_blank(),
+#         plot.margin = margin(t = 5, r = 15, b = 5, l = 5))
+# 
+# 
+# p56_outlier <- gridExtra::grid.arrange(p5, p6, ncol = 2)
+
